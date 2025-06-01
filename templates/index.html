@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yojana Pal - Government Scheme Advisor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    h1 {
+      color: #2b6cb0;
+    }
+
+    form {
+      margin-bottom: 2rem;
+    }
+
+    input, select {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    button {
+      padding: 0.7rem 1.2rem;
+      background-color: #2b6cb0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+
+    button:hover {
+      background-color: #2c5282;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.8rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #edf2f7;
+    }
+
+    .notes {
+      margin-top: 1.5rem;
+      background: #fefcbf;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+
+    .greeting {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-top: 1.5rem;
+    }
+
+    .language-toggle {
+      margin-bottom: 1rem;
+    }
+
+    .hero {
+      background: linear-gradient(90deg, #2b6cb0 60%, #90cdf4 100%);
+      color: #fff;
+      padding: 2rem 1rem 1.5rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2b6cb0;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 1s linear infinite;
+      margin: 1rem auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+
+    #otherCategoryContainer {
+      display: none;
+      margin-top: 0.5rem;
+    }
+
+    a:visited {
+      color: #2b6cb0; /* Keep visited links blue */
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <span style="font-size:2.5rem;vertical-align:middle;font-weight:bold;" id="title">Yojana Pal</span>
+    <p id="subtitle">Unlock Your Benefits: Discover Government Schemes Tailored for You!</p>
+  </div>
+
+  <div class="language-toggle">
+    <button onclick="setLanguage('en')">English</button>
+    <button onclick="setLanguage('hi')">हिन्दी</button>
+  </div>
+
+  <form id="yojanaForm">
+    <input type="text" name="name" id="name" placeholder="Enter your name" required />
+    <input type="number" name="age" id="age" placeholder="Enter your age" required />
+    <input type="number" name="income" id="income" placeholder="Monthly income in ₹" required />
+    <input type="text" name="profession" id="profession" placeholder="Your profession (e.g. doctor,farmer)" required />
+    <input type="text" name="state" id="state" placeholder="Your state (e.g. Maharashtra, Bihar)" required />
+
+    <select name="category" id="category" required>
+      <option value="">Select Category</option>
+      <option value="General">General</option>
+      <option value="OBC">OBC</option>
+      <option value="SC/ST">SC/ST</option>
+      <option value="Others">Others</option>
+    </select>
+
+    <div id="otherCategoryContainer">
+      <input type="text" id="otherCategory" placeholder="Please specify your category" />
+    </div>
+
+    <select name="gender" id="gender" required>
+      <option value="">Select gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+    <br>
+    <button type="submit" id="submitBtn">Check Eligibility</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    let currentLanguage = 'en';
+
+    const translations = {
+      en: {
+        title: "Yojana Pal",
+        subtitle: "Your friendly guide to government schemes.",
+        name: "Enter your name",
+        age: "Enter your age",
+        income: "Monthly income in ₹",
+        profession: "Your profession (e.g. doctor, farmer)",
+        state: "Your state",
+        category: "Your category",
+        genderLabel: "Select gender",
+        genderOptions: ["Male", "Female", "Other"],
+        submit: "Check Eligibility",
+        noSchemes: "Sorry, no government schemes are available for you at the moment.",
+      },
+      hi: {
+        title: "योजना पाल",
+        subtitle: "सरकारी योजनाओं का आपका मार्गदर्शक",
+        name: "अपना नाम दर्ज करें",
+        age: "अपनी उम्र दर्ज करें",
+        income: "मासिक आय ₹ में",
+        profession: "आपका पेशा (जैसे किसान)",
+        state: "आपका राज्य",
+        category: "आपकी श्रेणी (जैसे SC, ST, OBC, General)",
+        genderLabel: "लिंग चुनें",
+        genderOptions: ["पुरुष", "महिला", "अन्य"],
+        submit: "पात्रता जांचें",
+        noSchemes: "माफ़ कीजिए, आपके लिए कोई सरकारी योजना उपलब्ध नहीं है।",
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      const t = translations[lang];
+      document.getElementById('title').innerText = t.title;
+      document.getElementById('subtitle').innerText = t.subtitle;
+      document.getElementById('name').placeholder = t.name;
+      document.getElementById('age').placeholder = t.age;
+      document.getElementById('income').placeholder = t.income;
+      document.getElementById('profession').placeholder = t.profession;
+      document.getElementById('state').placeholder = t.state;
+      document.getElementById('category').options[0].text = t.category;
+      document.getElementById('gender').options[0].text = t.genderLabel;
+      document.getElementById('gender').options[1].text = t.genderOptions[0];
+      document.getElementById('gender').options[2].text = t.genderOptions[1];
+      document.getElementById('gender').options[3].text = t.genderOptions[2];
+      document.getElementById('submitBtn').innerText = t.submit;
+    }
+
+    document.getElementById('category').addEventListener('change', function () {
+      const otherContainer = document.getElementById('otherCategoryContainer');
+      if (this.value === 'Others') {
+        otherContainer.style.display = 'block';
+      } else {
+        otherContainer.style.display = 'none';
+        document.getElementById('otherCategory').value = '';
+      }
+    });
+
+    const form = document.getElementById("yojanaForm");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      if (data.category === "Others") {
+        data.category = document.getElementById("otherCategory").value;
+      }
+
+      resultDiv.innerHTML = '<div class="loader"></div><p>Checking eligibility...</p>';
+
+      const response = await fetch("/eligibility", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, lang: currentLanguage }),
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        resultDiv.innerHTML = `<p style="color: red;">Error: ${result.error}</p>`;
+        return;
+      }
+
+      const greeting = `<div class="greeting">${result.greeting}</div>`;
+
+      if (!result.schemes || result.schemes.length === 0) {
+        resultDiv.innerHTML = `${greeting}<p style="color:#cc0000;font-size:1.1rem;margin-top:1rem;">${translations[currentLanguage].noSchemes}</p>`;
+        return;
+      }
+
+      const timestamp = Date.now();
+
+      let table = `
+        <table>
+          <tr>
+            <th>Scheme</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Apply Link</th>
+          </tr>
+      `;
+
+      result.schemes.forEach((scheme) => {
+        const rawLink = scheme.apply_link;
+        const uniqueLink = rawLink !== 'Link not available' ? `${rawLink}?t=${timestamp}` : 'Link not available';
+
+        table += `
+          <tr>
+            <td>${scheme.scheme}</td>
+            <td>${scheme.type}</td>
+            <td>${scheme.description}</td>
+            <td>${uniqueLink === 'Link not available' ? uniqueLink : `<a href="${uniqueLink}" target="_blank">Apply</a>`}</td>
+          </tr>
+        `;
+      });
+
+      table += `</table>`;
+
+      const notes = `
+        <div class="notes">
+          <strong>Important Notes:</strong>
+          <ul>
+            ${result.notes.map((note) => `<li>${note}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+
+      resultDiv.innerHTML = `${greeting}${table}${notes}`;
+    });
+  </script>
+
+  <footer style="margin-top:2rem;text-align:center;color:#888;">
+    <p>Share Yojana Pal with friends & family to help them benefit too!</p>
+    <p>Need help? <a href="mailto:support@yojanapal.in">Contact Support</a></p>
+  </footer>
+</body>
+</html>
