@@ -4,7 +4,7 @@
 
 ## Features
 
-- Multilingual support (English 🇬🇧 & Hindi 🇮🇳)
+- Multilingual support (English & Hindi)
 - Scheme eligibility detection based on user profile
 - Prioritizes valid government apply links
 - Friendly, responsive UI
