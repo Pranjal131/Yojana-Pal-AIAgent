@@ -23,7 +23,6 @@ cd yojana-pal
 
 To run the app:
 
-```bash
 pip install -r requirements.txt
 python app.py
 
