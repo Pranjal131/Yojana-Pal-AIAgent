@@ -20,7 +20,8 @@
 git clone https://github.com/Pranjal131/Yojana-Pal-AIAgent.git
 cd yojana-pal
 
-2. To run the app:
+
+To run the app:
 
 ```bash
 pip install -r requirements.txt
