@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 app = Flask(__name__)
 
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "AIzaSyBS9cNqASL_Ggj1qjJMpuz3ekTK3tWbLdA") 
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY") 
 genai.configure(api_key=GOOGLE_API_KEY)
 
 @app.route('/')
