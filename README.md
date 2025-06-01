@@ -26,4 +26,6 @@ cd yojana-pal
 pip install -r requirements.txt
 python app.py
 
+The server will start on port 5000. You can access it by navigating to http://localhost:5000/ in your web browser.
+
 
