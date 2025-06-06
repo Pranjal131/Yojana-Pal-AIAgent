@@ -4,6 +4,9 @@ import os
 import json
 import re
 from urllib.parse import urlparse
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -132,4 +135,5 @@ def check_eligibility():
         return jsonify({"error": "Something went wrong while fetching schemes."}), 500
 
 if __name__ == '__main__':
+
     app.run(debug=True, host='localhost', port=5000)
